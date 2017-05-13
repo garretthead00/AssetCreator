@@ -1,0 +1,27 @@
+{
+  "name": "asset-creator",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "description": "AssetCreator",
+  "author": {
+    "name": "Garrett"
+  },
+  "dependencies": {
+    "angular": "^1.6.4",
+    "angular-route": "^1.6.4",
+    "body-parser": "^1.15.0",
+    "bootstrap": "^3.3.7",
+    "cookie-parser": "^1.4.0",
+    "debug": "^2.2.0",
+    "ejs": "^2.5.6",
+    "express": "^4.14.0",
+    "jquery": "^3.2.1",
+    "morgan": "^1.7.0",
+    "mssql": "^3.3.0",
+    "pug": "^2.0.0-beta6",
+    "serve-favicon": "^2.3.0"
+  }
+}

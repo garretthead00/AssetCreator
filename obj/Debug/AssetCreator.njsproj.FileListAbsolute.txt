@@ -1,0 +1,2 @@
+C:\Users\Garrett\Desktop\Workspace\AssetCreator\bin\Microsoft.NodejsTools.WebRole.dll
+C:\Users\Garrett\Desktop\Workspace\AssetCreator\obj\Debug\AssetCreator.njsprojResolveAssemblyReference.cache
