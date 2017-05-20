@@ -8,21 +8,13 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var port = process.env.PORT || 3000;
 var router = express.Router();
-var appRoutes = require('./routes/api');
-var users = require('./routes/users');
+var appRoutes = require('./app/routes/api')(router);
+var templateRoutes = require('./app/routes/templateRoutes')(router);
+var userRoutes = require('./app/routes/userRoutes')(router);
 const sql = require('mssql');
+const Sequelize = require('sequelize');
+var models = require('./app/models/');
 var app = express();
-
-
-// Configure the database.
-var dbConfig = {
-    
-    server: "localhost\\SQLEXPRESS", // IP\InstanceName
-    database: "assetCreator",
-    user: "Garrett",
-    password: "lsutigers1",
-    port: 1433
-};
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
@@ -44,37 +36,35 @@ app.set('views', path.join(__dirname, '/public/views'));
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
-// declare the client-side paths to the libraries being referenced on index.html
+// Declare the client-side paths to the libraries being referenced on index.html
 app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js')); // redirect bootstrapJS
 app.use('/js', express.static(__dirname + '/node_modules/jquery/dist')); // redirect JS jQuery
 app.use('/js', express.static(__dirname + '/node_modules/angular')); // redirect JS AngularJS
 app.use('/js', express.static(__dirname + '/node_modules/angular-route')); // redirect JS Angular-Route
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css')); // redirect CSS bootstrap
+app.use('/fonts', express.static(__dirname + '/node_modules/bootstrap/fonts')); // redirect CSS bootstrap
 app.use('/api', appRoutes);
-//app.use('/users', users);
+app.use('/templates', templateRoutes);
+//app.use('/users', userRoutes);
 
-//var conn = new sql.Connection(dbConfig); // Establish the db connection instance.
-var connection = new sql.Connection(dbConfig);
-var req = new sql.Request(connection); // establish the db Request instance.
-// Connect to the db.
-sql.connect(function (err) {
-    if (err) {
-        throw err;
-        console.log("Error establishing a connection to the database");
-        console.log(err);
-        return;
-    }
-    else {
-        console.log("Connection to the database successfully!");
-    }
+// Fixes the Angular ngRoute refeshing problem
+app.get('*', function (req, res) {
+    res.sendFile(path.join(__dirname + '/public/index.html'));
 });
 
+// Test the db connection.
+models.sequelize.authenticate()
+    .then(function () {
+        console.log('Connection to db successful!');
+    })
+    .catch(function (error) {
+        console.log("Error creating connection to db:", error);
+    });
 
-
-//send our index.html file to the user for the home page
-app.get('/', function (req, res) {
-    res.sendFile(path.join(__dirname + '/public/views/index.html'));
+models.sequelize.sync().then(function () {
+    console.log("DB tables synced to the Server!");
 });
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

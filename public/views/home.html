@@ -1,0 +1,278 @@
+﻿<div class="container">
+    <h2 class="page-header">CameronLNG</h2>
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="panel" style="margin:0px">
+                <div class="panel-body">
+                    <nav class="assetCreatorNav">
+                        <ul class="nav nav-tabs">
+                            <li role="tab" class="active"><a data-toggle="tab" href="##templates"><label>Templates</label></a>
+                            <li role="tab"><a data-toggle="tab" href="##assets"><label>Assets</label></a>
+                        </ul>
+                    </nav>
+                    <div class="tab-content">
+                        <div id="templates" class="tab-pane active">
+                            <div class="panel panel-default">
+                                
+                                <div class="panel-body">
+                                    <div ng-controller="templateCtrl">
+                                        <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            Templates
+                                        </div>
+                                            <div class="panel-body">
+                                                <section>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon" id="templateSearchAdd-On"><span class="glyphicon glyphicon-search"></span></span>
+                                                        <input type="text" class="form-control" placeholder="Search" aria-describedby="templateSearchAdd-On" ng-model="templateSearchFilter">
+                                                    </div>
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Name</th>
+                                                                <th>Description</th>
+                                                                <th>Stage</th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="temps in templates | filter : templateSearchFilter" ng-click="showTemplate(temps)">
+                                                                <td>{{ temps.name }}</td>
+                                                                <td>{{ temps.description }}</td>
+                                                                <td>{{ temps.stage }}</td>
+                                                                <td><span class="glyphicon glyphicon-trash" ng-click="removeTemplate(temps.id)"></span></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+
+                                                </section>
+                                            </div></div>
+                                        <!-- Beginning of template form section panel. -->
+                                        <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <p>Template Form</p>
+                                        </div>
+                                            <div class="panel-body">
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                            <section>
+                                                                <form id="templateForm" validate>
+                                                                    <input type="text" class="form-control" ng-model="currentTemplate.name" placeholder="Name" />
+                                                                    <input type="text" class="form-control" ng-model="currentTemplate.description" placeholder="Description" />
+                                                                    <select class="form-control" ng-model="currentTemplate.derivedTemplate">
+                                                                        <option value="">-- Select a derived template --</option>
+                                                                        <option value="1">1</option>
+                                                                        <option value="2">2</option>
+                                                                        <option value="3">3</option>
+                                                                        <option value="4">4</option>
+                                                                        <option value="5">5</option>
+                                                                        <option value="6">6</option>
+                                                                        <option value="7">7</option>
+                                                                        <option value="8">8</option>
+                                                                        <option value="9">9</option>
+                                                                        <option value="10">10</option>
+                                                                        <option value="11">11</option>
+                                                                        <option value="12">12</option>
+                                                                    </select>
+                                                                    <table class="table">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>#</th>
+                                                                                <th colspan="2">Attribute</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr ng-repeat="attr in currentTemplate.attributes">
+                                                                                <td>{{ attr }}</td>
+                                                                                <td><span class="glyphicon glyphicon-trash" ng-click="removeAttributeFromTemplate(attr)"></span></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td colspan="2">
+                                                                                    <input type="text" class="form-control" ng-model="newAttribute" placeholder="Enter an attribute" />
+                                                                                </td>
+                                                                                <td>
+                                                                                    <span class="glyphicon glyphicon-plus" ng-click="addAttributeToTemplate()"></span>
+                                                                                </td>
+
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+
+                                                                    <div class="form-group">
+                                                                        <p>Analysis</p>
+                                                                        <input type="text" class="form-control" ng-model="currentTemplate.analysis.name" placeholder="Analysis Name" />
+                                                                        <input type="text" class="form-control" ng-model="currentTemplate.analysis.expression" placeholder="Expression" />
+                                                                        <input type="text" class="form-control" ng-model="currentTemplate.analysis.outputAttribute" placeholder="Output Attribute" />
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <p>Scheduling</p>
+                                                                        <div class="radio">
+                                                                            <label>
+                                                                                <input type="radio" name="optionsRadios" id="eventTriggerRadio" value="triggered" ng-model="currentTemplate.scheduling.selection">
+                                                                                Event Triggered
+                                                                            </label>
+                                                                            <input type="text" class="form-control" placeholder="Set the event trigger" ng-model="currentTemplate.scheduling.eventTrigger.expression" ng-disabled="!currentTemplate.scheduling.selection || currentTemplate.scheduling.selection == 'periodic'" />
+
+                                                                        </div>
+                                                                        <div class="radio">
+                                                                            <label>
+                                                                                <input type="radio" name="optionsRadios" id="periodicRadio" value="periodic" ng-model="currentTemplate.scheduling.selection">
+                                                                                Periodic
+                                                                            </label>
+                                                                            <p>Starting at</p>
+                                                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                                                                <select class="form-control" ng-model="currentTemplate.scheduling.periodic.startAt.hour" ng-disabled="!currentTemplate.scheduling.selection || currentTemplate.scheduling.selection == 'triggered'" >
+                                                                                    <option value="">- Hour -</option>
+                                                                                    <option value="01">1</option>
+                                                                                    <option value="02">2</option>
+                                                                                    <option value="03">3</option>
+                                                                                    <option value="04">4</option>
+                                                                                    <option value="05">5</option>
+                                                                                    <option value="06">6</option>
+                                                                                    <option value="07">7</option>
+                                                                                    <option value="08">8</option>
+                                                                                    <option value="09">9</option>
+                                                                                    <option value="10">10</option>
+                                                                                    <option value="11">11</option>
+                                                                                    <option value="12">12</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                                                                <select class="form-control" ng-model="currentTemplate.scheduling.periodic.startAt.minute" ng-disabled="!currentTemplate.scheduling.selection || currentTemplate.scheduling.selection == 'triggered'" >
+                                                                                    <option value="">- Min -</option>
+                                                                                    <option value="00">00</option>
+                                                                                    <option value="05">05</option>
+                                                                                    <option value="10">10</option>
+                                                                                    <option value="15">15</option>
+                                                                                    <option value="20">20</option>
+                                                                                    <option value="25">25</option>
+                                                                                    <option value="30">30</option>
+                                                                                    <option value="35">35</option>
+                                                                                    <option value="40">40</option>
+                                                                                    <option value="45">45</option>
+                                                                                    <option value="50">50</option>
+                                                                                    <option value="55">55</option>
+                                   
+                                                                                </select> 
+                                                                            </div>
+                                                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                                                                <select class="form-control" ng-model="currentTemplate.scheduling.periodic.startAt.amPm" ng-disabled="!currentTemplate.scheduling.selection || currentTemplate.scheduling.selection == 'triggered'">
+                                                                                    <option value="">- AM/PM -</option>
+                                                                                    <option value="AM">AM</option>
+                                                                                    <option value="PM">PM</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <p>Repeat every</p>
+                                                                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" >
+                                                                                <select class="form-control" ng-model="currentTemplate.scheduling.periodic.repeatOn.hour" ng-disabled="!currentTemplate.scheduling.selection || currentTemplate.scheduling.selection == 'triggered'" >
+                                                                                    <option value="">- Hour -</option>
+                                                                                    <option value="01">1</option>
+                                                                                    <option value="02">2</option>
+                                                                                    <option value="03">3</option>
+                                                                                    <option value="04">4</option>
+                                                                                    <option value="05">5</option>
+                                                                                    <option value="06">6</option>
+                                                                                    <option value="07">7</option>
+                                                                                    <option value="08">8</option>
+                                                                                    <option value="09">9</option>
+                                                                                    <option value="10">10</option>
+                                                                                    <option value="11">11</option>
+                                                                                    <option value="12">12</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                                                                <select class="form-control" ng-model="currentTemplate.scheduling.periodic.repeatOn.minute" ng-disabled="!currentTemplate.scheduling.selection || currentTemplate.scheduling.selection == 'triggered'" >
+                                                                                    <option value="">- Min -</option>
+                                                                                    <option value="00">00</option>
+                                                                                    <option value="05">05</option>
+                                                                                    <option value="10">10</option>
+                                                                                    <option value="15">15</option>
+                                                                                    <option value="20">20</option>
+                                                                                    <option value="25">25</option>
+                                                                                    <option value="30">30</option>
+                                                                                    <option value="35">35</option>
+                                                                                    <option value="40">40</option>
+                                                                                    <option value="45">45</option>
+                                                                                    <option value="50">50</option>
+                                                                                    <option value="55">55</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <p>Quality Testing Procedures</p>
+                                                                        <table class="table">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Procedure</th>
+                                                                                    <th colspan="2">Description</th>
+
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr ng-repeat="procedures in currentTemplate.procedures">
+                                                                                    <td>{{ procedures.name }}</td>
+                                                                                    <td>{{ procedures.description }}</td>
+                                                                                    <td><span class="glyphicon glyphicon-trash" ng-click="removeProcedureFromTemplate(procedures)"></span></td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <select class="form-control" ng-model="newProcedure.name">
+                                                                                            <option value="">- Select procedure -</option>
+                                                                                            <option value="1">1</option>
+                                                                                            <option value="2">2</option>
+                                                                                            <option value="3">3</option>
+                                                                                            <option value="4">4</option>
+                                                                                            <option value="5">5</option>
+                                                                                            <option value="6">6</option>
+                                                                                            <option value="7">7</option>
+                                                                                            <option value="8">8</option>
+                                                                                            <option value="9">9</option>
+                                                                                            <option value="10">10</option>
+                                                                                            <option value="11">11</option>
+                                                                                            <option value="12">12</option>
+                                                                                        </select>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input type="text" class="form-control" placeholder="Procedure description" ng-model="newProcedure.description"/>
+                                                                                    </td>
+                                                                                    <td><span class="glyphicon glyphicon-plus" ng-click="addProcedureToTemplate()"></span></td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td colspan="3">
+                                                                                        <div class="form-group pull-right">
+                                                                                            <button type="reset" name="resetCurrentTemplateBtn" class="btn btn-md btn-seconary" ng-disabled="isUploading">Reset</button>
+                                                                                            <button type="submit" name="updateCurrentTemplateBtn" class="btn btn-md btn-primary" ng-hide="currentTemplate.id == null" ng-click="updateTemplateWith(currentTemplate)" ng-disabled="isUploading">Update</button>
+                                                                                            <button type="submit" name="createNewTemplateBtn" class="btn btn-md btn-success" ng-hide="currentTemplate.id != null" ng-click="createNewTemplate(currentTemplate)" ng-disabled="isUploading">Create</button>
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+
+                                                                </form>
+
+                                                            </section>
+
+                                                        </div></div></div>
+                                            </div></div> <!-- End of template form section panel. -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="assets" class="tab-pane">
+                            <div class="panel panel-default">
+                                <div class="panel-heading"><span style="font-size:16px; padding-left:5px">Assets</span></div>
+                                <div class="panel-body"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
