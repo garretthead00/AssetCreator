@@ -6,8 +6,10 @@
     "\\app\\routes",
     "\\public",
     "\\public\\js",
-    "\\public\\js\\scripts"
+    "\\public\\js\\controllers",
+    "\\public\\js\\services",
+    "\\public\\views"
   ],
-  "SelectedNode": "\\public\\js\\scripts",
+  "SelectedNode": "\\public\\js\\controllers\\assetCtrl.js",
   "PreviewInSolutionExplorer": false
 }

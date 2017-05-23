@@ -9,43 +9,46 @@
     $scope.newProcedure = {};
     $scope.newAttribute = null;
     $scope.templates = [];
-    $scope.currentTemplate = {
-        name: null,
-        description: null,
-        derivedTemplate: null,
-        analysis: {
-            name : null,
-            expression: null,
-            outputAttribute:null
-
-        },
-        attributes: [],
-        scheduling: {
-            eventTrigger: {
-                expression: null
-            },
-            periodic: {
-                startAt: {
-                    hour: null,
-                    minute: null,
-                    amPm: null
-                },
-                repeatOn: {
-                    hour: null,
-                    minute : null
+    $scope.setCurrentTemplate = function () {
+        $scope.currentTemplate = {
+            name: null,
+            description: null,
+            derivedTemplate: null,
+            analysis: {
+                name: null,
+                expression: null,
+                outputAttribute: null,
+                scheduling: {
+                    eventTrigger: {
+                        expression: null
+                    },
+                    periodic: {
+                        startAt: {
+                            expression: null,
+                            hour: null,
+                            minute: null,
+                            amPm: null
+                        },
+                        repeatOn: {
+                            expression: null,
+                            hour: null,
+                            minute: null
+                        }
+                    },
                 }
             },
-        },
-        procedures: []
+            attributes: [], 
+            procedures: []
+        };
     };
 
     // fetches all templates for the user
     $scope.getTemplates = function () {
         Template.getTemplates().then(function (data) {
             if (data.data.success) {
-                console.log("Templates returned successfully");
+               // console.log("Templates returned successfully");
                 if (data.data.templates) {
-                    console.log("Templates exist in db");
+                    //console.log("Templates exist in db");
                     $scope.templates = data.data.templates;
                 } else {
                     console.log("No templates exist in db");
@@ -56,17 +59,18 @@
         });
     };
 
+
     // fetch all templates
     $scope.getTemplates();
+    $scope.setCurrentTemplate();
+    
 
     function convertStartAt(t) {
-        var time = t.split(/[\s:]+/);
-        var timeObj = {
-            hour: time[0],
-            minute: time[1],
-            amPm: time[2]
+        if (t) {
+            var time = t.split(/[\s:]+/);
+            return time;
         }
-        return timeObj;
+        return false;
     };
 
     function convertRepeatOn(t) {
@@ -82,57 +86,58 @@
     $scope.showTemplate = function (data) {
         Template.getTemplateWith(data.id).then(function (data) {
             if (data.data.success) {
+                console.log("Show Template: ");
                 console.log(data.data.template);
-                var startAt = convertStartAt(data.data.template.schedulingPeriodicStartAt);
-                var repeatOn = convertRepeatOn(data.data.template.schedulingPeriodicRepeatOn);
 
+                var startAt = (data.data.template.Analysis.periodicStartAt) ? convertStartAt(data.data.template.Analysis.periodicStartAt) : null;
+                var repeatOn = (data.data.template.Analysis.periodicRepeatOn) ? convertStartAt(data.data.template.Analysis.periodicRepeatOn) : null;
                 $scope.currentTemplate = {
                     name: data.data.template.name,
                     description: data.data.template.description,
                     derivedTemplate: data.data.template.derivedTemplate,
+                    attributes: data.data.template.Attributes,
+                    procedures: data.data.template.Procedures,
                     analysis: {
-                        name: data.data.template.analysisName,
-                        expression: data.data.template.analysisExpression,
-                        outputAttribute: data.data.template.analysisOutputAttribute
-
-                    },
-                    attributes: [],
-                    scheduling: {
-                        eventTrigger: {
-                            expression: data.data.template.schedulingEventTriggerExpression
-                        },
-                        periodic: {
-                            expression: data.data.template.schedulingPeriodicExpression,
-                            startAt: {
-                                hour: startAt.hour,
-                                minute: startAt.minute,
-                                amPm: startAt.amPm
+                        name: data.data.template.Analysis.name,
+                        expression: data.data.template.Analysis.expression,
+                        outputAttribute: data.data.template.Analysis.outputAttribute,
+                        scheduling: {
+                            eventTrigger: {
+                                expression: data.data.template.Analysis.eventTrigger
                             },
-                            repeatOn: {
-                                hour: repeatOn.hour,
-                                minute: repeatOn.minute
-                            }
-                        },
-                    },
-                    procedures: []
+                            periodic: {
+                                startAt: {
+                                    expression: data.data.template.Analysis.periodicStartAt,
+                                    hour: startAt[0],
+                                    minute: startAt[1],
+                                    amPm: startAt[2]
+                                },
+                                repeatOn: {
+                                    expression: data.data.template.Analysis.periodicRepeatOn,
+                                    hour: repeatOn[0],
+                                    minute: repeatOn[1]
+                                }
+                            },
+                        }
+                    }
                 };
             } else {
-                $scope.currentTemplate = {};
+                $scope.setCurrentTemplate();
             }
         });
     };
 
-    // ng-click "Create" button
+
     $scope.createNewTemplate = function (data) {
         $scope.isUploading = true;
         $scope.currentTemplate = data;
-        console.log($scope.currentTemplate);
+        $scope.currentTemplate.analysis.scheduling.periodic.startAt.expression = data.analysis.scheduling.periodic.startAt.hour + ":" + data.analysis.scheduling.periodic.startAt.minute + " " + data.analysis.scheduling.periodic.startAt.amPm;
+        $scope.currentTemplate.analysis.scheduling.periodic.repeatOn.expression = data.analysis.scheduling.periodic.repeatOn.hour + ":" + data.analysis.scheduling.periodic.repeatOn.minute;
         Template.createTemplate($scope.currentTemplate).then(function (data) {
             if (data.data.success) {
                 console.log("New template created successfully!");
                 console.log(data.data.message);
-
-                $scope.currentTemplate = {};
+                $scope.setCurrentTemplate();
                 $scope.getTemplates();
             } else {
                 console.log("New template created unsuccessfully!");
@@ -165,7 +170,9 @@
     // ng-click "+" button on attributes table
     $scope.addAttributeToTemplate = function () {
         console.log("addAttributeToTemplateWith fired!");
-        $scope.currentTemplate.attributes.push($scope.newAttribute);
+        $scope.currentTemplate.attributes.push({
+            name: $scope.newAttribute
+        });
         $scope.newAttribute = null;
     };
 
@@ -196,4 +203,41 @@
         $scope.newProcedure = {};
     };
 
+    $scope.resetTemplateForm = function () {
+        $scope.setCurrentTemplate();
+    };
+
+
+    // fired when the derivedTemplate droplist selection is changed.
+    $scope.setDerivedTemplate = function () {
+        console.log("setDerivedTemplate fired!");
+        var index = $scope.templates.indexOf($scope.currentTemplate.derivedTemplate);
+        if (index >= 0) {
+            // get the values for the derivedTemplate to be inherited by the currentTemplate
+            Template.getTemplateWith($scope.currentTemplate.derivedTemplate.id).then(function (data) {
+                if (data.data.success) {
+
+                    var startAt = (data.data.template.Analysis.periodicStartAt) ? convertStartAt(data.data.template.Analysis.periodicStartAt) : null;
+                    var repeatOn = (data.data.template.Analysis.periodicRepeatOn) ? convertStartAt(data.data.template.Analysis.periodicRepeatOn) : null;
+                    $scope.currentTemplate.attributes = $scope.currentTemplate.attributes.concat(data.data.template.Attributes);
+                    $scope.currentTemplate.procedures = $scope.currentTemplate.procedures.concat(data.data.template.Procedures);
+                    $scope.currentTemplate.analysis.scheduling.periodic.startAt = {
+                        expression: data.data.template.Analysis.periodicStartAt,
+                        hour: startAt[0],
+                        minute: startAt[1],
+                        amPm: startAt[2]
+                    };
+                    $scope.currentTemplate.analysis.scheduling.periodic.repeatOn = {
+                        expression: data.data.template.Analysis.periodicRepeatOn,
+                        hour: repeatOn[0],
+                        minute: repeatOn[1]
+                    };
+
+                } else {
+                    $scope.setCurrentTemplate();
+                }
+            });
+        }
+
+    }
 });

@@ -9,7 +9,7 @@ var dbConfig = {
     server: "localhost", // IP\InstanceName
     database: "AssetCreator",
     dialect: 'mssql',
-    user: "Garrett",
+    user: "ghost",
     password: "lsutigers1",
     pool: {
         max: 5,

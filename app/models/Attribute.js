@@ -15,8 +15,9 @@
         classMethods: {
             associate: function (models) {
                 Attribute.belongsToMany(models.Template, { through: "TemplateAttributes" });
+                Attribute.belongsToMany(models.Asset, { through: "AssetAttributes" });
             }
-        },
+        }
     });
     return Attribute;
 

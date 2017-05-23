@@ -50,12 +50,20 @@ body {
     font-size: 26px;
 }
 
-#templateForm .form-control {
+#templateForm .form-control,
+#assetForm .form-control {
     margin: 10px 0px;
-    max-width:100%;
+    max-width: 100%;
 }
-#templateForm{
-    display:block;
-    border:1px solid black;
-    padding:10px;
+
+
+.title > h3 {
+    color: #0881C2;
+    font-weight: 600;
+}
+
+#templateForm .page-header > h4,
+#assetForm .page-header > h4 {
+    color: #88BADD;
+    font-weight: 600;
 }

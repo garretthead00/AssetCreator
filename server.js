@@ -10,6 +10,7 @@ var port = process.env.PORT || 3000;
 var router = express.Router();
 var appRoutes = require('./app/routes/api')(router);
 var templateRoutes = require('./app/routes/templateRoutes')(router);
+var assetRoutes = require('./app/routes/assetRoutes')(router);
 var userRoutes = require('./app/routes/userRoutes')(router);
 const sql = require('mssql');
 const Sequelize = require('sequelize');
@@ -45,7 +46,7 @@ app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
 app.use('/fonts', express.static(__dirname + '/node_modules/bootstrap/fonts')); // redirect CSS bootstrap
 app.use('/api', appRoutes);
 app.use('/templates', templateRoutes);
-//app.use('/users', userRoutes);
+app.use('/assets', assetRoutes);
 
 // Fixes the Angular ngRoute refeshing problem
 app.get('*', function (req, res) {
