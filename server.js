@@ -47,6 +47,7 @@ app.use('/fonts', express.static(__dirname + '/node_modules/bootstrap/fonts')); 
 app.use('/api', appRoutes);
 app.use('/templates', templateRoutes);
 app.use('/assets', assetRoutes);
+app.use('/users', userRoutes);
 
 // Fixes the Angular ngRoute refeshing problem
 app.get('*', function (req, res) {

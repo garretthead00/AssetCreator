@@ -1,4 +1,4 @@
-angular.module('authServices', [])
+angular.module('authenticationServices', [])
 
 .factory('Auth', function($http, AuthToken){
 

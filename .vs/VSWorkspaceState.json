@@ -10,6 +10,6 @@
     "\\public\\js\\services",
     "\\public\\views"
   ],
-  "SelectedNode": "\\public\\js\\controllers\\assetCtrl.js",
+  "SelectedNode": "\\app\\models\\User.js",
   "PreviewInSolutionExplorer": false
 }

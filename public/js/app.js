@@ -1,4 +1,4 @@
-﻿angular.module('assetCreatorApp', ['assetCreatorRoutes', 'mainController', 'templateServices', 'templateController', 'authServices', 'userServices', 'assetServices', 'assetController'])
+﻿angular.module('assetCreatorApp', ['assetCreatorRoutes', 'mainController', 'templateServices', 'templateController', 'authenticationServices', 'userServices', 'assetServices', 'assetController', 'signupController'])
 
 
 // configure the app to intercept all http request with the AuthInterceptors factory.

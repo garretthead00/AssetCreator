@@ -67,7 +67,7 @@ module.exports = function (router) {
                 models.Template.create({
                     name: req.body.name,
                     description: req.body.description,
-                    derivedTemplate: req.body.derivedTemplate.id,
+                    derivedTemplate: (req.body.derivedTemplate) ? req.body.derivedTemplate.id : null,
                     analysisId: analysis.id,
                     stage: "draft"
                 })

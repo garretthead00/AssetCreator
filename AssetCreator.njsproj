@@ -29,12 +29,18 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="app\models\Analysis.js" />
+    <Compile Include="app\models\Asset.js" />
     <Compile Include="app\models\Attribute.js" />
     <Compile Include="app\models\index.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="app\models\Notification.js" />
     <Compile Include="app\models\Procedure.js" />
+    <Compile Include="app\models\Roles.js" />
     <Compile Include="app\models\Template.js" />
+    <Compile Include="app\models\User.js" />
+    <Compile Include="app\routes\assetRoutes.js" />
     <Compile Include="node_modules\accepts\index.js" />
     <Compile Include="node_modules\acorn-globals\index.js" />
     <Compile Include="node_modules\acorn-globals\node_modules\acorn\dist\acorn.es.js" />
@@ -3032,6 +3038,9 @@
     <Compile Include="server.js" />
     <Compile Include="app\routes\api.js" />
     <Compile Include="app\routes\userRoutes.js" />
+    <Content Include=".vs\config\applicationhost.config" />
+    <Content Include=".vs\slnx.sqlite" />
+    <Content Include=".vs\VSWorkspaceState.json" />
     <Content Include="bin\Microsoft.NodejsTools.WebRole.dll" />
     <Content Include="node_modules\.bin\acorn" />
     <Content Include="node_modules\.bin\acorn.cmd" />
@@ -4871,12 +4880,19 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="public\views\login.html" />
+    <Content Include="public\views\signup.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="README.md" />
     <Content Include="public\views\error.html">
       <SubType>Code</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include=".vs\" />
+    <Folder Include=".vs\AssetCreator\" />
+    <Folder Include=".vs\AssetCreator\v15\" />
+    <Folder Include=".vs\config\" />
     <Folder Include="app\models\" />
     <Folder Include="bin\" />
     <Folder Include="app\" />
