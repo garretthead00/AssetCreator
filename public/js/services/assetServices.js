@@ -24,6 +24,9 @@ angular.module('assetServices', [])
     assetFactory.updateAssetWith = function (data) {
         return $http.put('/assets/updateAssetWith');
     };
+	assetFactory.getPiTags = function () {
+		return $http.get('/assets/piTags');
+	};
 
     return assetFactory;
     });

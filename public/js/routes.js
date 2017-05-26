@@ -45,19 +45,19 @@ app.run(['$rootScope', 'Auth', '$location', 'User', function ($rootScope, Auth, 
                 if (!Auth.isLoggedIn()) {
                     event.preventDefault();
                     $location.path('/');
-                }
-                // check if the route requires permission.
-                //else if (next.$$route.permission) {
-                //    User.getPermission().then(function (data) {
-                //        if (next.$$route.permission[0] !== data.data.permission) {
-                //            if (next.$$route.permission[1] !== data.data.permission) {
-                //                event.preventDefault();
-                //                $location.path('/');
-                //            }
-                //        }
-                //    });
+				}
+					// check if the route requires permission.
+                else if (next.$$route.permission) {
+                    User.getPermission().then(function (data) {
+                        if (next.$$route.permission[0] !== data.data.permission) {
+                            if (next.$$route.permission[1] !== data.data.permission) {
+                                event.preventDefault();
+                                $location.path('/');
+                            }
+                        }
+                    });
 
-                //}
+                }
 
             }
         }

@@ -20,9 +20,9 @@ angular.module('userServices', [])
             return $http.post('/users/checkemail', userData);
         };
 
-        //userFactory.getPermission = function () {
-        //    return $http.get('/api/permission');
-        //};
+        userFactory.getPermission = function (name) {
+            return $http.get('/users/permission/' + name);
+        };
 
         //userFactory.getUsers = function () {
         //    return $http.get('/api/management');

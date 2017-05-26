@@ -119,6 +119,24 @@ angular.module('assetController', ['assetServices'])
 		});
 	};
 
+	$scope.getPiTags = function () {
+		Asset.getPiTags().then((data) => {
+			if (data.data.success) {
+				if (data.data.tags) {
+					$scope.piTags = data.data.tags;
+
+				} else {
+					$scope.piTags = [];
+				}
+			} else {
+				console.log("err fetching pi tags:  " + data.data.message);
+			}
+		}).catch((err)=>{
+			throw err;
+		});
+	};
+
+
 	// fetches the asset by id
 	$scope.showAsset = function (data) {
 		Asset.getAssetWith(data.id).then(function (data) {
@@ -132,7 +150,7 @@ angular.module('assetController', ['assetServices'])
 					name: data.data.asset.name,
 					description: data.data.asset.description,
 					derivedTemplate: data.data.asset.derivedTemplate,
-					attributes: data.data.asset.Attributes,
+					attributes: JSON.parse(data.data.asset.attr),
 					procedures: data.data.asset.Procedures,
 					analysis: {
 						name: data.data.asset.Analysis.name,
@@ -158,6 +176,8 @@ angular.module('assetController', ['assetServices'])
 						}
 					}
 				};
+				console.log("attr: ");
+				console.log($scope.currentAsset.attributes);
 			} else {
 				$scope.setCurrentAsset();
 			}
@@ -207,7 +227,8 @@ angular.module('assetController', ['assetServices'])
 	$scope.addAttributeToAsset = function () {
 		console.log("addAttributeToAssetWith fired!");
 		$scope.currentAsset.attributes.push({
-			name: $scope.newAttribute
+			name: $scope.newAttribute,
+			piTag: $scope.newPiTag
 		});
 		$scope.newAttribute = null;
 	};
@@ -244,67 +265,45 @@ angular.module('assetController', ['assetServices'])
 		console.log($scope.currentAsset.derivedTemplate);
 		console.log("selected index: " + index);
 
-		resetAttributesList($scope.currentAsset.attributes);
+		//resetAttributesList($scope.currentAsset.attributes);
 
-		if (index >= 0) {
+
+
 			// get the values for the derivedTemplate to be inherited by the currentAsset
-			Asset.getAssetWith($scope.currentAsset.derivedTemplate.id).then(function (data) {
+			Template.getTemplateWith($scope.currentAsset.derivedTemplate).then(function (data) {
 				if (data.data.success) {
-					console.log("found derived asset");
-					var startAt = (data.data.asset.Analysis.periodicStartAt) ? convertStartAt(data.data.asset.Analysis.periodicStartAt) : null;
-					var repeatOn = (data.data.asset.Analysis.periodicRepeatOn) ? convertStartAt(data.data.asset.Analysis.periodicRepeatOn) : null;
-					$scope.currentAsset.attributes = $scope.currentAsset.attributes.concat(data.data.Asset.Attributes);
-					$scope.currentAsset.procedures = $scope.currentAsset.procedures.concat(data.data.Asset.Procedures);
-					$scope.currentAsset.analysis.name = data.data.asset.Analysis.name,
-					$scope.currentAsset.analysis.expression= data.data.asset.Analysis.expression,
-					$scope.currentAsset.analysis.outputAttribute= data.data.asset.Analysis.outputAttribute,
+
+					var startAt = (data.data.template.Analysis.periodicStartAt) ? convertStartAt(data.data.template.Analysis.periodicStartAt) : null;
+					var repeatOn = (data.data.template.Analysis.periodicRepeatOn) ? convertStartAt(data.data.template.Analysis.periodicRepeatOn) : null;
+					$scope.currentAsset.attributes = $scope.currentAsset.attributes.concat(data.data.template.Attributes);
+					$scope.currentAsset.analysis.name = data.data.template.Analysis.name;
+					$scope.currentAsset.analysis.expression = data.data.template.Analysis.expression;
+					$scope.currentAsset.analysis.outputAttribtue = data.data.template.Analysis.outputAttribtue;
+
 					$scope.currentAsset.analysis.scheduling.periodic.startAt = {
-						expression: data.data.asset.Analysis.periodicStartAt,
+						expression: data.data.template.Analysis.periodicStartAt,
 						hour: startAt[0],
 						minute: startAt[1],
 						amPm: startAt[2]
 					};
 					$scope.currentAsset.analysis.scheduling.periodic.repeatOn = {
-						expression: data.data.asset.Analysis.periodicRepeatOn,
+						expression: data.data.template.Analysis.periodicRepeatOn,
 						hour: repeatOn[0],
 						minute: repeatOn[1]
 					};
 
 				} else {
-					console.log("no derived asset found. searching for template");
-					// get the values for the derivedTemplate to be inherited by the currentAsset
-					Template.getTemplateWith($scope.currentAsset.derivedTemplate.id).then(function (data) {
-						if (data.data.success) {
-
-							var startAt = (data.data.template.Analysis.periodicStartAt) ? convertStartAt(data.data.template.Analysis.periodicStartAt) : null;
-							var repeatOn = (data.data.template.Analysis.periodicRepeatOn) ? convertStartAt(data.data.template.Analysis.periodicRepeatOn) : null;
-							$scope.currentAsset.attributes = $scope.currentAsset.attributes.concat(data.data.template.Attributes);
-							$scope.currentAsset.analysis.scheduling.periodic.startAt = {
-								expression: data.data.template.Analysis.periodicStartAt,
-								hour: startAt[0],
-								minute: startAt[1],
-								amPm: startAt[2]
-							};
-							$scope.currentAsset.analysis.scheduling.periodic.repeatOn = {
-								expression: data.data.template.Analysis.periodicRepeatOn,
-								hour: repeatOn[0],
-								minute: repeatOn[1]
-							};
-
-						} else {
-							$scope.setCurrentAsset();
-						}
-					});
+					$scope.setCurrentAsset();
 				}
 			});
-		}
 
-	}
+	};
 
 
 	// run the command on each reload
 	$scope.getAssets();
 	$scope.getTemplates();
 	$scope.setCurrentAsset();
+	$scope.getPiTags();
 
 });

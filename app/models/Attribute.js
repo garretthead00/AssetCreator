@@ -1,4 +1,6 @@
 ﻿module.exports = function (sequelize, DataTypes) {
+
+
     var Attribute = sequelize.define('Attribute', {
         id: {
             type: DataTypes.INTEGER,

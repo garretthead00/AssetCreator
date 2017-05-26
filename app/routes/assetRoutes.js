@@ -53,40 +53,57 @@ module.exports = function (router) {
 				eventTrigger: req.body.analysis.scheduling.eventTrigger.expression,
 				periodicStartAt: req.body.analysis.scheduling.periodic.startAt.expression,
 				periodicRepeatOn: req.body.analysis.scheduling.periodic.repeatOn.expression
+
 			}
 		})
-			.spread((analysis, created) => {
-				models.Asset.create({
-					name: req.body.name,
-					description: req.body.description,
-					derivedTemplate: req.body.derivedTemplate.id,
-					analysisId: analysis.id,
-					stage: "draft"
-				})
-					.then(function (result) {
+		.spread((analysis, created) => {
+			var atts = [];
+			var attString = null;
+			// if the asset has attributes
+			if (req.body.attributes.length > 0) {
+					
+				for (var i = 0; i < req.body.attributes.length; i++) {
+					var a = {
+						name: req.body.attributes[i].name,
+						piTag: req.body.attributes[i].piTag
+					};
+					atts.push(a);
+					attString = JSON.stringify(atts);
+				}
+			}
+			models.Asset.create({
+				name: req.body.name,
+				description: req.body.description,
+				derivedTemplate: req.body.derivedTemplate,
+				analysisId: analysis.id,
+				attr: attString
 
-						// if the asset has attributes
-						if (req.body.attributes.length > 0) {
-							for (var i = 0; i < req.body.attributes.length; i++) {
-								models.Attribute.findOrCreate({
-									where: { name: req.body.attributes[i].name },
-									defaults: {
-										name: req.body.attributes[i].name
-									}
-								})
-									.spread((attribute, created) => {
-										attribute.addAsset(result.id);
-									});
-							}
-						}
-						// Notifications
-						
-						res.json({ success: true, message: "Asset created successfully!" });
-					})
-					.catch(function (err) {
-						res.json({ success: false, message: "Asset created unsuccessful..." });
-					});
+			})
+			.then(function (result) {
+				res.json({ success: true, message: "Asset created successfully!" });
+			})
+			.catch(function (err) {
+				res.json({ success: false, message: "Asset created unsuccessful..." });
 			});
+
+
+		});
+	});
+
+	router.get('/piTags', function (req, res) {
+		models.PiTag.findAll({
+			attributes: ['id', 'name'],
+			where: {}
+		}).then((result) => {
+			if (result) {
+				res.json({ success: true, tags: result });
+			} else {
+				res.json({ success: false, message: 'No tags found.' });
+			}
+			
+		}).catch((err)=>{
+			throw err;
+		});
 	});
 
     return router; 

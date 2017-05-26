@@ -19,7 +19,11 @@ module.exports = function (sequelize, DataTypes) {
         stage: {
             type: DataTypes.STRING,
             allowNull: true
-        }
+		},
+		attr: {
+			type: DataTypes.STRING,
+			allowNull: true
+		}
     },
     {
         classMethods: {

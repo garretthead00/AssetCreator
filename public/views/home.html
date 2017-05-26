@@ -41,7 +41,7 @@
                                                                 <tr ng-repeat="temps in templates | filter : templateSearchFilter" ng-click="showTemplate(temps)">
                                                                     <td>{{ temps.name }}</td>
                                                                     <td>{{ temps.description }}</td>
-                                                                    <td>{{ temps.stage }}</td>
+                                                                    <td></td>
                                                                     <td><span class="glyphicon glyphicon-trash" ng-click="removeTemplate(temps.id)"></span></td>
                                                                 </tr>
                                                             </tbody>
@@ -316,9 +316,9 @@
                                                                             <div class="page-header"><h4>Asset Form</h4></div>
                                                                             <input type="text" class="form-control" ng-model="currentAsset.name" placeholder="Name" />
                                                                             <input type="text" class="form-control" ng-model="currentAsset.description" placeholder="Description" />
-                                                                            <select class="form-control" ng-model="currentAsset.derivedTemplate" ng-options="temps as temps.name for temps in templates" ng-change="setDerivedTemplate()">
+                                                                            <select class="form-control" ng-model="currentAsset.derivedTemplate" ng-change="setDerivedTemplate()">
                                                                                 <option value="">-- Select a derived asset --</option>
-
+																				<option ng-repeat="temps in templates" value="{{temps.id}}">{{temps.name}}</option>
                                                                             </select>
                                                                         </div>
                                                                         <div class="list-group-item">
@@ -326,19 +326,38 @@
                                                                             <table class="table">
                                                                                 <thead>
                                                                                     <tr>
-                                                                                        <th><span class="text-muted">#</span></th>
-                                                                                        <th colspan="2"><span class="text-muted">Attribute</span></th>
+                                                                                        <th><span class="text-muted">Attribute</span></th>
+                                                                                        <th colspan="2"><span class="text-muted">Pi Tag</span></th>
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
                                                                                     <tr ng-repeat="attr in currentAsset.attributes">
-                                                                                        <td>{{ attr.name }}</td>
+                                                                                        <td>{{ attr.name }} {{ attr.piTag.name}}</td>
+																						<td><select class="form-control" ng-model="attr.piTag.name">
+																							<option value="">--Select a Pi Tag --</option>
+																								<option ng-repeat=" tags in piTags">{{tags.name}}</option>
+																							</select></td>
                                                                                         <td><span class="glyphicon glyphicon-trash" ng-click="removeAttributeFromAsset(attr)"></span></td>
                                                                                     </tr>
+																					<tr ng-repeat="attr in currentAsset.attributes.derived">
+																						<td>{{ attr.name }} {{ attr.piTag.name}}</td>
+																						<td>
+																							<select class="form-control" ng-model="attr.piTag.name">
+																								<option value="">--Select a Pi Tag --</option>
+																								<option ng-repeat=" tags in piTags">{{tags.name}}</option>
+																							</select>
+																						</td>
+																						<td><span class="glyphicon glyphicon-trash" ng-click="removeAttributeFromAsset(attr)"></span></td>
+																					</tr>
                                                                                     <tr>
-                                                                                        <td colspan="2">
+                                                                                        <td>
                                                                                             <input type="text" class="form-control" ng-model="newAttribute" placeholder="Enter an attribute" />
                                                                                         </td>
+																						<td>
+																							<select class="form-control"  ng-model="newPiTag" ng-options="tag as tag.name for tag in piTags">
+																								<option value="">--Select a Pi Tag --</option>
+																							</select>
+																						</td>
                                                                                         <td>
                                                                                             <span class="glyphicon glyphicon-plus" ng-click="addAttributeToAsset()"></span>
                                                                                         </td>

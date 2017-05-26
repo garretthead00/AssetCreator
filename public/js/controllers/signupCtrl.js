@@ -43,11 +43,8 @@ angular.module('signupController', ['userServices','authenticationServices'])
             app.userData.createdAt = todaysDateToSQLString();
             app.userData.updatedAt = todaysDateToSQLString();
             User.create(app.userData).then(function (data) {
-                console.log("Creating user began...");
-                console.log(app.userData);
+ 
                 if (data.data.success) {
-					console.log("Creating user succesful...");
-					console.log("pw: " +app.userData.password);
 					Auth.login(app.userData).then(function(data){
 						if(data.data.success){
 							app.successMsg = data.data.message + "...Redirecting.";

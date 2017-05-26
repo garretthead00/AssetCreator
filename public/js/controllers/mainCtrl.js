@@ -6,7 +6,6 @@ angular.module('mainController', ['authenticationServices', 'userServices'])
         app.isAdmin = false;
         app.isMod = false;
 
-        console.log("Hello form mainCtrl.js!");
         // Check if user's session has expired upon opening page for the first time
         if (Auth.isLoggedIn()) {
             // Check if a the token expired
@@ -23,8 +22,9 @@ angular.module('mainController', ['authenticationServices', 'userServices'])
         } else {
             // Redirect to login page
             app.errorMsg = false;
-            app.successMsg = false;
-            $location.path('/login');
+			app.successMsg = false;
+			$location.path('/login'); // Redirect to login page
+            
         }
 
         // Function to run an interval that checks if the user's token has expired
@@ -44,16 +44,16 @@ angular.module('mainController', ['authenticationServices', 'userServices'])
                         var expireTime = self.parseJwt(token);
                         var timeStamp = Math.floor(Date.now() / 1000);
                         var sessionTimeRemaining = expireTime.exp - timeStamp;
-                        console.log('session time remaining: ' + sessionTimeRemaining);
+                        //console.log('session time remaining: ' + sessionTimeRemaining);
                         if (sessionTimeRemaining <= 0) {
-                            console.log('token has expired.');
+                            //console.log('token has expired.');
                             $interval.cancel(interval); // Stop interval
                             Auth.logout(); // Log the user out
                             app.isLoggedIn = false; // Set session to false
                             $location.path('/'); // Redirect to home page
                         }
                          else {
-                         	console.log('token not yet expired.');
+                         	//console.log('token not yet expired.');
                          }
                     }
                 }, 2000);
@@ -72,18 +72,15 @@ angular.module('mainController', ['authenticationServices', 'userServices'])
             if (Auth.isLoggedIn()) {
                 app.isLoggedIn = true;
 				Auth.getUser().then(function (data) {
-					console.log("getUser(): " + data.data.user);
                     app.id = data.data.id;
                     app.username = data.data.user;
-                    
-
-                    //User.getPermission().then(function (data) {
-                    //    if (data.data.permission === 'Admin') {
-                    //        app.isAdmin = true;
-                    //    } else if (data.data.permission === 'Mod') {
-                    //        app.isMod = true;
-                    //    }
-                    //});
+					User.getPermission(data.data.user).then(function (data) {
+						if (data.data.role === 'Admin') {
+							app.isAdmin = true;
+						} else if (data.data.role === 'Mod') {
+							app.isMod = true;
+						} 
+                    });
                 });
             } else {
                 app.isLoggedIn = false;
@@ -97,10 +94,8 @@ angular.module('mainController', ['authenticationServices', 'userServices'])
             Auth.login(app.loginData).then(function (data) {
                 if (data.data.success) {
                     app.successMsg = data.data.message + "...Redirecting.";
-
                     $timeout(function () {
                         $location.path('/home');
-
                         app.loginData = '';
                         app.successMsg = false;
                     }, 2000);
