@@ -46,8 +46,9 @@ angular.module('signupController', ['userServices','authenticationServices'])
                 console.log("Creating user began...");
                 console.log(app.userData);
                 if (data.data.success) {
-                    console.log("Creating user succesful...");
-					Auth.login(data.data.user).then(function(data){
+					console.log("Creating user succesful...");
+					console.log("pw: " +app.userData.password);
+					Auth.login(app.userData).then(function(data){
 						if(data.data.success){
 							app.successMsg = data.data.message + "...Redirecting.";
 							$timeout(function(){

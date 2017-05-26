@@ -58,17 +58,19 @@ module.exports = function (router) {
         
         models.User.findOne({
             attributes: ['id', 'name', 'email', 'password'],
-            where: { name: req.body.name }
+            where: { name: req.body.username }
         }).then(function(result){
             if(!result){
              res.json({ success: false, message: 'Could not authenticate user.' });
             } else {
-                if (req.body.password) {
-                    var validPassword = result.comparePassword(req.body.password);
+				if (req.body.password) {
+					console.log("req.body.password: " + req.body.password);
+					var validPassword = result.comparePassword(req.body.password);
+					console.log("validPassword: " + validPassword);
                     if (!validPassword) {
                         res.json({ success: false, message: 'Could not authenticate password.' });
                     } else {
-                        var token = jwt.sign({ id: user.id, user: result.name }, secret, { expiresIn: '24h' });
+						var token = jwt.sign({ id: result.id, user: result.name }, secret, { expiresIn: '24h' });
                         res.json({ success: true, message: 'User authenticated!', token: token });
                     }
                 } else {
@@ -141,7 +143,9 @@ module.exports = function (router) {
         }
     });
 
-    router.post('/me', function (req, res) {
+	router.post('/me', function (req, res) {
+		console.log("req.decoded");
+		console.log(req.decoded);
         res.send(req.decoded);
     });
 

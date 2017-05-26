@@ -29,31 +29,25 @@ module.exports = function (sequelize, DataTypes) {
             }
         },
         instanceMethods: {
-            comparePassword: function(password){
+			comparePassword: function (password) {
+				console.log("password: " + password + " hash: " + this.password);
 	            return bcrypt.compareSync(password, this.password);
-            }
-        },
-        hooks: {
-            beforeCreate: () => {
-                var user = this;
-                // Function to encrypt password 
-                bcrypt.hash(user.password, null, null, function (err, hash) {
-                    if (err) return next(err); // Exit if error is found
-                    user.password = hash; // Assign the hash to the user's password so it is saved in database encrypted
-                    next(); // Exit Bcrypt function
-                });
+			}
 
-                bcrypt.genSalt(saltRounds, function (err, salt) {
-                    bcrypt.hash(myPlaintextPassword, salt, function (err, hash) {
-                        // Store hash in your password DB. 
-                    });
-                });
-            }
+
 
         }
     
     });
-
+	User.beforeCreate((user, options) => {
+		return bcrypt.hash(user.password, 10)
+		.then((hash) => {
+			user.password = hash; // assign the hash to the user's password so it is saved in database encrypted				}).catch((err) => {
+			return hash;
+		}).catch((err)=>{
+			if (err) return next(err);
+		})
+	});
 
     return User;
 

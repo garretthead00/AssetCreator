@@ -7,25 +7,25 @@ angular.module('mainController', ['authenticationServices', 'userServices'])
         app.isMod = false;
 
         console.log("Hello form mainCtrl.js!");
-        //// Check if user's session has expired upon opening page for the first time
-        //if (Auth.isLoggedIn()) {
-        //    // Check if a the token expired
-        //    Auth.getUser().then(function (data) {
-        //        // Check if the returned user is undefined (expired)
-        //        if (data.data.username === undefined) {
-        //            Auth.logout(); // Log the user out
-        //            app.isLoggedIn = false; // Set session to false
-        //            $location.path('/'); // Redirect to login page
-        //            app.loadme = true; // Allow loading of page
-        //        }
-        //    });
-        //    alert("Userlogged In");
-        //} else {
-        //    // Redirect to login page
-        //    app.errorMsg = false;
-        //    app.successMsg = false;
-        //    $location.path('/login');
-        //}
+        // Check if user's session has expired upon opening page for the first time
+        if (Auth.isLoggedIn()) {
+            // Check if a the token expired
+            Auth.getUser().then(function (data) {
+                // Check if the returned user is undefined (expired)
+                if (data.data.user === undefined) {
+                    Auth.logout(); // Log the user out
+                    app.isLoggedIn = false; // Set session to false
+                    $location.path('/'); // Redirect to login page
+                    app.loadme = true; // Allow loading of page
+                }
+            });
+           
+        } else {
+            // Redirect to login page
+            app.errorMsg = false;
+            app.successMsg = false;
+            $location.path('/login');
+        }
 
         // Function to run an interval that checks if the user's token has expired
         app.checkSession = function () {
@@ -71,18 +71,19 @@ angular.module('mainController', ['authenticationServices', 'userServices'])
             // When the page loads, check if the user is logged in.
             if (Auth.isLoggedIn()) {
                 app.isLoggedIn = true;
-                Auth.getUser().then(function (data) {
-                    app._id = data.data._id;
-                    app.username = data.data.username;
-                    app.useremail = data.data.email;
+				Auth.getUser().then(function (data) {
+					console.log("getUser(): " + data.data.user);
+                    app.id = data.data.id;
+                    app.username = data.data.user;
+                    
 
-                    User.getPermission().then(function (data) {
-                        if (data.data.permission === 'Admin') {
-                            app.isAdmin = true;
-                        } else if (data.data.permission === 'Mod') {
-                            app.isMod = true;
-                        }
-                    });
+                    //User.getPermission().then(function (data) {
+                    //    if (data.data.permission === 'Admin') {
+                    //        app.isAdmin = true;
+                    //    } else if (data.data.permission === 'Mod') {
+                    //        app.isMod = true;
+                    //    }
+                    //});
                 });
             } else {
                 app.isLoggedIn = false;
