@@ -5,11 +5,12 @@
     "\\app\\models",
     "\\app\\routes",
     "\\public",
+    "\\public\\css",
     "\\public\\js",
     "\\public\\js\\controllers",
     "\\public\\js\\services",
     "\\public\\views"
   ],
-  "SelectedNode": "\\app\\models\\User.js",
+  "SelectedNode": "\\app\\routes\\userRoutes.js",
   "PreviewInSolutionExplorer": false
 }

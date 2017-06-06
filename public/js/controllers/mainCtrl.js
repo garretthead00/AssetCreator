@@ -64,7 +64,6 @@ angular.module('mainController', ['authenticationServices', 'userServices'])
 
         // Anytime a new route is requested, check whether the user is logged in.
         $rootScope.$on('$routeChangeStart', function () {
-
             // Check the session time for expiration.
             if (!app.checkingSession) app.checkSession();
 
@@ -73,11 +72,15 @@ angular.module('mainController', ['authenticationServices', 'userServices'])
                 app.isLoggedIn = true;
 				Auth.getUser().then(function (data) {
                     app.id = data.data.id;
-                    app.username = data.data.user;
+					app.username = data.data.user;
+					console.log("user: " + data.data.user);
 					User.getPermission(data.data.user).then(function (data) {
+						console.log(data);
 						if (data.data.role === 'Admin') {
+							console.log("Admin");
 							app.isAdmin = true;
 						} else if (data.data.role === 'Mod') {
+							console.log("Mod");
 							app.isMod = true;
 						} 
                     });

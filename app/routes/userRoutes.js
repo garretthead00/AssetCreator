@@ -27,7 +27,7 @@ module.exports = function (router) {
 					name: req.body.username,
 					password: req.body.password,
 					email: req.body.email,
-					roleId: role,
+					roleId: role.id,
 					createdAt: req.body.createdAt,
 					updatedAt: req.body.updatedAt
 				})
@@ -136,17 +136,19 @@ module.exports = function (router) {
 			attributes: ['roleId'],
 			where: { name: req.params.name }
 		}).then((result) => {
-
+			console.log("result");
+			console.log(result);
 			models.Role.findOne({
 				attributes: ['name'],
-				where: { id: result }
+				where: { id: result.roleId }
 			})
-			.then((role) => {
-				res.json({ success: true, role: role });
+				.then((role) => {
+					console.log("role");
+					console.log(role);
+				res.json({ success: true, role: role.name });
 			})
 				.catch((err) => {
 					throw err;
-					
 			});
 			
 		})
